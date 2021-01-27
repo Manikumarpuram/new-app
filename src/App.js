@@ -1,31 +1,56 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./styles.css";
 
+
+
+
 const App = () => {
-  return (
-    <>
-      <ContactCard />
-      <ContactCard />
-      <ContactCard />
-      <ContactCard />
-      <ContactCard />
-      <ContactCard />
-    </>
-  )
+  const [contacts, setContacts] = useState([]);
+  useEffect(() =>{
+
+    fetch("https://randomuser.me/api/?results=1")
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      setContacts(data.results);
+      
+    });
+  },[])
+    return (
+      <>
+        {contacts.map(contact => (
+          <ContactCard
+            avatar={contact.picture.large}
+            name={contact.name.first + " " + contact.name.last}
+            email={contact.email}
+            age={contact.dob.age}
+          />
+        ))}
+      </>
+    );
 
 }
+const ContactCard = props => {
+  console.log(props.avatar);
+  console.log(props.name);
+  console.log(props.email);
+  console.log(props.age);
 
-const ContactCard = () => {
+  const [showAge, setShowAge] = useState(false);
+
   return (
     <div className="contact-card">
-      <img src="https://via.placeholder.com/150" alt="profile" />
+      <img src={props.avatar} alt="profile" />
       <div className="user-details">
-        <p>Name: Jenny Han</p>
-        <p>Email: Jenny.Han@notreal.com</p>
-        <p>Age: 25</p>
+        <p>Name: {props.name}</p>
+        <p>Email: {props.email}</p>
+        {showAge === true ? <p>Age: {props.age}</p> : null}
+        <button onClick={() => setShowAge(!showAge)}>
+          Toggle Age
+  </button>
       </div>
     </div>
   )
-}
+};
 
 export default App;
